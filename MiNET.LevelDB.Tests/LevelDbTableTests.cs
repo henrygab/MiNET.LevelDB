@@ -104,13 +104,13 @@ namespace MiNET.LevelDB.Tests
 
 
 		[Test]
-		[Ignore(reason: "Hard-coded expected length is not guaranteed stable, differs on GitHub Action build")]
+		//[Ignore(reason: "Hard-coded expected length is not guaranteed stable, differs on GitHub Action build")]
 		public void DupCompressionTest()
 		{
 			// This is just an off-topic experiment. Allocation free compression, reusing the same buffer for input
 			// and output. Also works for decompression if uncompressed size is know beforehand.
-
-			var buffer = TestUtils.FillArrayWithRandomBytes(10000, 10, 1234).AsMemory();
+			const int OriginalLength = 10000;
+			var buffer = TestUtils.FillArrayWithRandomBytes(OriginalLength, 10, 1234).AsMemory();
 			var originalBuffer = buffer.ToArray();
 			var firstBytes = buffer.Slice(0, 10).ToArray();
 
@@ -125,8 +125,8 @@ namespace MiNET.LevelDB.Tests
 			var inFirstBytes = output.Slice(0, 10);
 			Assert.AreNotEqual(firstBytes.ToHexString(), inFirstBytes.ToHexString());
 
-			long len = inStream.Position;
-			Assert.AreEqual(5127, len);
+			long len = inStream.Position;        // NOTE: Does this use implementation-specific side-effects?  If so, may not be safe to rely on this....
+			Assert.IsTrue(len < OriginalLength); // NOTE: This is not, by itself, necessarily sufficient.
 
 			var compressedMem = new BufferStream(buffer.Slice(0, (int) len));
 			var decompressStream = new DeflateStream(compressedMem, CompressionMode.Decompress);

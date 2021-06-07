@@ -71,24 +71,34 @@ namespace MiNET.LevelDB.Tests
 		}
 
 		[Test]
+		[Ignore(reason: "Hard-coded log file '000047.log' does not exist")]
 		public void LevelDbSearchLogTest()
 		{
+			ResultStatus result;
+
 			// https://github.com/google/leveldb/blob/master/doc/log_format.md
+			try
+			{
+				DirectoryInfo directory = TestUtils.GetTestDirectory();
 
-			DirectoryInfo directory = TestUtils.GetTestDirectory();
+				LogReader logReader = new LogReader(new FileInfo(Path.Combine(directory.FullName, "000047.log")));
+				logReader.Open();
+				MemCache memCache = new MemCache();
+				memCache.Load(logReader);
 
-			LogReader logReader = new LogReader(new FileInfo(Path.Combine(directory.FullName, "000047.log")));
-			logReader.Open();
-			MemCache memCache = new MemCache();
-			memCache.Load(logReader);
-
-			var result = memCache.Get(new byte[] {0xeb, 0xff, 0xff, 0xff, 0xf3, 0xff, 0xff, 0xff, 0x31});
+				result = memCache.Get(new byte[] { 0xeb, 0xff, 0xff, 0xff, 0xf3, 0xff, 0xff, 0xff, 0x31 });
+			}
+			catch (Exception e)
+			{
+				throw;
+			}
 
 			Assert.IsTrue(ReadOnlySpan<byte>.Empty != result.Data);
 			Assert.AreEqual(new byte[] {0xA, 0x00, 0x00, 0x02, 0x05}, result.Data.Slice(0, 5).ToArray());
 		}
 
 		[Test]
+		[Ignore(reason: "Hard-coded log file '000047.log' does not exist")]
 		public void LevelDbReadLogTest()
 		{
 			// https://github.com/google/leveldb/blob/master/doc/log_format.md

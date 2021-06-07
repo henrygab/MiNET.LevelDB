@@ -61,6 +61,7 @@ namespace MiNET.LevelDB.Tests
 		}
 
 		[Test]
+		[Ignore(reason: "Hard-coded log file '000047.log' does not exist")]
 		public void WriteLevel0TableTest()
 		{
 			using var logReader = new LogReader(new FileInfo(Path.Combine(TestUtils.GetTestDirectory().FullName, "000047.log")));

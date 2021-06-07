@@ -104,6 +104,7 @@ namespace MiNET.LevelDB.Tests
 
 
 		[Test]
+		[Ignore(reason: "Hard-coded expected length is not guaranteed stable, differs on GitHub Action build")]
 		public void DupCompressionTest()
 		{
 			// This is just an off-topic experiment. Allocation free compression, reusing the same buffer for input
